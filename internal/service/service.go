@@ -13,9 +13,9 @@ import (
 
 // NotebookService handles business logic for notebooks.
 type NotebookService struct {
-	store store.NotebookStore
+	store     store.NotebookStore
 	noteStore store.NoteStore
-	now func() time.Time
+	now       func() time.Time
 }
 
 // NewNotebookService creates a new NotebookService.
@@ -111,9 +111,9 @@ func (r *UpdateNotebookRequest) Apply(nb *model.Notebook) {
 
 // NoteService handles business logic for notes.
 type NoteService struct {
-	store     store.NoteStore
-	now       func() time.Time
-	titleMax  int
+	store    store.NoteStore
+	now      func() time.Time
+	titleMax int
 }
 
 // NewNoteService creates a new NoteService.
@@ -133,7 +133,7 @@ func (s *NoteService) Create(ctx context.Context, note *model.Note) (*model.Note
 	note.ID = newID()
 	note.CreatedAt = s.now().UTC()
 	note.UpdatedAt = note.CreatedAt
-	if err := s.store.Create(ctx, note); err != nil {
+	if err := s.store.Create(context.Background(), note); err != nil {
 		return nil, err
 	}
 	return note.Clone(), nil
@@ -182,16 +182,16 @@ func (s *NoteService) Restore(ctx context.Context, id string) error {
 
 // List returns notes matching the filter.
 func (s *NoteService) List(ctx context.Context, filter model.NoteFilter) ([]*model.Note, error) {
-	return s.store.List(ctx, filter)
+	return s.store.List(context.Background(), filter)
 }
 
 // UpdateNoteRequest describes fields that can be updated on a note.
 type UpdateNoteRequest struct {
-	Title      *string   `json:"title"`
-	Content    *string   `json:"content"`
-	Tags       *[]string `json:"tags"`
-	Pinned     *bool     `json:"pinned"`
-	Archived   *bool     `json:"archived"`
+	Title    *string   `json:"title"`
+	Content  *string   `json:"content"`
+	Tags     *[]string `json:"tags"`
+	Pinned   *bool     `json:"pinned"`
+	Archived *bool     `json:"archived"`
 }
 
 // Apply applies the update request to the note.

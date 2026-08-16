@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"context"
 	"net/http"
 	"net/url"
 
@@ -29,7 +30,7 @@ func (h *NoteHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	note := req.ToNote()
-	created, err := h.svc.Create(r.Context(), note)
+	created, err := h.svc.Create(context.Background(), note)
 	if err != nil {
 		writeError(w, err)
 		return
