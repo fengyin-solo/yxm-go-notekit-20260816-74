@@ -103,9 +103,9 @@ func (s *MemoryNoteStore) Delete(ctx context.Context, id string) error {
 	if !ok {
 		return model.ErrNotFound
 	}
-	if n.Deleted {
-		return nil
-	}
+	// Permanent delete removes the note regardless of its soft-delete state;
+	// only adjust the live count for notes that were not already trashed, so
+	// the counter is not decremented twice.
 	if !n.Deleted {
 		s.notebook[n.NotebookID]--
 	}

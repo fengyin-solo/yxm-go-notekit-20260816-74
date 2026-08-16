@@ -71,10 +71,12 @@ func (s *NotebookService) Update(ctx context.Context, id string, req *UpdateNote
 
 // Delete deletes a notebook (cascades to notes).
 func (s *NotebookService) Delete(ctx context.Context, id string) error {
-	// Cascade delete all notes in this notebook
+	// Cascade delete all notes in this notebook permanently, including any
+	// that are already in the trash, so no residual notes remain readable
+	// or visible in lists (even with deleted content included).
 	notes, _ := s.noteStore.List(ctx, model.NoteFilter{NotebookID: id, IncludeDeleted: true})
 	for _, n := range notes {
-		s.noteStore.SoftDelete(ctx, n.ID)
+		s.noteStore.Delete(ctx, n.ID)
 	}
 	return s.store.Delete(ctx, id)
 }
