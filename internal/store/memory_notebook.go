@@ -47,6 +47,9 @@ func NewMemoryNotebookStore(path string, log *logger.Logger, interval time.Durat
 }
 
 func (s *MemoryNotebookStore) Create(ctx context.Context, nb *model.Notebook) error {
+	if err := model.ContextErr(ctx); err != nil {
+		return err
+	}
 	if nb == nil || nb.ID == "" {
 		return model.ErrInvalidInput
 	}
@@ -96,6 +99,9 @@ func (s *MemoryNotebookStore) Delete(ctx context.Context, id string) error {
 }
 
 func (s *MemoryNotebookStore) List(ctx context.Context) ([]*model.Notebook, error) {
+	if err := model.ContextErr(ctx); err != nil {
+		return nil, err
+	}
 	s.mu.RLock()
 	out := make([]*model.Notebook, 0, len(s.items))
 	for _, nb := range s.items {

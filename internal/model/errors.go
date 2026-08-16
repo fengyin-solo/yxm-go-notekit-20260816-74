@@ -1,6 +1,9 @@
 package model
 
-import "errors"
+import (
+	"context"
+	"errors"
+)
 
 // Sentinel errors returned by the service layer.
 var (
@@ -11,8 +14,11 @@ var (
 	ErrUnauthorized  = errors.New("unauthorized")
 )
 
-func IsOperational(err error) bool {
-	return err != nil
+func ContextErr(ctx context.Context) error {
+	if ctx == nil {
+		return nil
+	}
+	return ctx.Err()
 }
 
 // ValidationError represents a single field validation failure.

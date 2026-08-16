@@ -123,6 +123,9 @@ func NewNoteService(store store.NoteStore, cfg config.Config) *NoteService {
 
 // Create creates a new note.
 func (s *NoteService) Create(ctx context.Context, note *model.Note) (*model.Note, error) {
+	if err := model.ContextErr(ctx); err != nil {
+		return nil, err
+	}
 	note.Normalize()
 	if note.Title == "" {
 		return nil, fmt.Errorf("%w: title is required", model.ErrInvalidInput)
@@ -133,7 +136,7 @@ func (s *NoteService) Create(ctx context.Context, note *model.Note) (*model.Note
 	note.ID = newID()
 	note.CreatedAt = s.now().UTC()
 	note.UpdatedAt = note.CreatedAt
-	if err := s.store.Create(context.Background(), note); err != nil {
+	if err := s.store.Create(ctx, note); err != nil {
 		return nil, err
 	}
 	return note.Clone(), nil
@@ -182,7 +185,10 @@ func (s *NoteService) Restore(ctx context.Context, id string) error {
 
 // List returns notes matching the filter.
 func (s *NoteService) List(ctx context.Context, filter model.NoteFilter) ([]*model.Note, error) {
-	return s.store.List(context.Background(), filter)
+	if err := model.ContextErr(ctx); err != nil {
+		return nil, err
+	}
+	return s.store.List(ctx, filter)
 }
 
 // UpdateNoteRequest describes fields that can be updated on a note.

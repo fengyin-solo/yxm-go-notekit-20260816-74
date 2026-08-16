@@ -49,6 +49,9 @@ func NewMemoryNoteStore(path string, log *logger.Logger, interval time.Duration)
 }
 
 func (s *MemoryNoteStore) Create(ctx context.Context, note *model.Note) error {
+	if err := model.ContextErr(ctx); err != nil {
+		return err
+	}
 	if note == nil || note.ID == "" || note.NotebookID == "" {
 		return model.ErrInvalidInput
 	}
@@ -66,6 +69,9 @@ func (s *MemoryNoteStore) Create(ctx context.Context, note *model.Note) error {
 }
 
 func (s *MemoryNoteStore) GetByID(ctx context.Context, id string) (*model.Note, error) {
+	if err := model.ContextErr(ctx); err != nil {
+		return nil, err
+	}
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	n, ok := s.items[id]
@@ -144,6 +150,9 @@ func (s *MemoryNoteStore) Restore(ctx context.Context, id string) error {
 }
 
 func (s *MemoryNoteStore) List(ctx context.Context, filter model.NoteFilter) ([]*model.Note, error) {
+	if err := model.ContextErr(ctx); err != nil {
+		return nil, err
+	}
 	s.mu.RLock()
 	matched := make([]*model.Note, 0, len(s.items))
 	for _, n := range s.items {
@@ -165,6 +174,9 @@ func (s *MemoryNoteStore) List(ctx context.Context, filter model.NoteFilter) ([]
 }
 
 func (s *MemoryNoteStore) Count(ctx context.Context, filter model.NoteFilter) (int, error) {
+	if err := model.ContextErr(ctx); err != nil {
+		return 0, err
+	}
 	s.mu.RLock()
 	n := 0
 	for _, note := range s.items {
