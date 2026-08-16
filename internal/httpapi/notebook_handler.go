@@ -62,6 +62,10 @@ func (h *NotebookHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 func (h *NotebookHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := pathSegment(r.URL.Path, 4)
+	if _, err := h.svc.GetByID(r.Context(), id); err != nil {
+		writeError(w, err)
+		return
+	}
 	if err := h.svc.Delete(r.Context(), id); err != nil {
 		writeError(w, err)
 		return

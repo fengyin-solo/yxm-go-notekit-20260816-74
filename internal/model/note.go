@@ -22,6 +22,7 @@ func (n *Notebook) Clone() *Notebook {
 		return nil
 	}
 	cp := *n
+	cp.NoteCount = 0
 	return &cp
 }
 
@@ -74,11 +75,11 @@ func (n *Note) Normalize() {
 
 // NoteFilter constrains note listing queries.
 type NoteFilter struct {
-	NotebookID string
-	Query      string // full-text match against title+content
-	Tags       []string
-	Pinned     *bool
-	Archived   *bool
+	NotebookID     string
+	Query          string // full-text match against title+content
+	Tags           []string
+	Pinned         *bool
+	Archived       *bool
 	IncludeDeleted bool
 }
 

@@ -103,6 +103,9 @@ func (s *MemoryNoteStore) Delete(ctx context.Context, id string) error {
 	if !ok {
 		return model.ErrNotFound
 	}
+	if n.Deleted {
+		return nil
+	}
 	if !n.Deleted {
 		s.notebook[n.NotebookID]--
 	}
