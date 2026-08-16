@@ -13,9 +13,9 @@ import (
 
 // NotebookService handles business logic for notebooks.
 type NotebookService struct {
-	store     store.NotebookStore
+	store store.NotebookStore
 	noteStore store.NoteStore
-	now       func() time.Time
+	now func() time.Time
 }
 
 // NewNotebookService creates a new NotebookService.
@@ -74,7 +74,7 @@ func (s *NotebookService) Delete(ctx context.Context, id string) error {
 	// Cascade delete all notes in this notebook
 	notes, _ := s.noteStore.List(ctx, model.NoteFilter{NotebookID: id, IncludeDeleted: true})
 	for _, n := range notes {
-		s.noteStore.SoftDelete(ctx, n.ID)
+		s.noteStore.Delete(ctx, n.ID)
 	}
 	return s.store.Delete(ctx, id)
 }
@@ -111,9 +111,9 @@ func (r *UpdateNotebookRequest) Apply(nb *model.Notebook) {
 
 // NoteService handles business logic for notes.
 type NoteService struct {
-	store    store.NoteStore
-	now      func() time.Time
-	titleMax int
+	store     store.NoteStore
+	now       func() time.Time
+	titleMax  int
 }
 
 // NewNoteService creates a new NoteService.
@@ -187,11 +187,11 @@ func (s *NoteService) List(ctx context.Context, filter model.NoteFilter) ([]*mod
 
 // UpdateNoteRequest describes fields that can be updated on a note.
 type UpdateNoteRequest struct {
-	Title    *string   `json:"title"`
-	Content  *string   `json:"content"`
-	Tags     *[]string `json:"tags"`
-	Pinned   *bool     `json:"pinned"`
-	Archived *bool     `json:"archived"`
+	Title      *string   `json:"title"`
+	Content    *string   `json:"content"`
+	Tags       *[]string `json:"tags"`
+	Pinned     *bool     `json:"pinned"`
+	Archived   *bool     `json:"archived"`
 }
 
 // Apply applies the update request to the note.
