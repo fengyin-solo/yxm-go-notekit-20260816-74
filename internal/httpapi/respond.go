@@ -25,6 +25,9 @@ func writeValidationErrors(w http.ResponseWriter, ve model.ValidationErrors) {
 }
 
 func mapError(err error) int {
+	if err == nil {
+		return http.StatusOK
+	}
 	switch err {
 	case model.ErrNotFound:
 		return http.StatusNotFound

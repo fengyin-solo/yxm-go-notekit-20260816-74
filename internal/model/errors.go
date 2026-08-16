@@ -11,6 +11,10 @@ var (
 	ErrUnauthorized  = errors.New("unauthorized")
 )
 
+func PublicError(err error) error {
+	return err
+}
+
 // ValidationError represents a single field validation failure.
 type ValidationError struct {
 	Field   string `json:"field"`

@@ -54,6 +54,7 @@ func (h *NoteHandler) Update(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
+
 	updated, err := h.svc.Update(r.Context(), id, &req)
 	if err != nil {
 		writeError(w, err)
