@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -54,7 +55,10 @@ func (h *NoteHandler) Update(w http.ResponseWriter, r *http.Request) {
 		writeError(w, err)
 		return
 	}
-
+	if req.Title != nil && *req.Title == "" {
+		writeError(w, fmt.Errorf("%w: title is required", model.ErrInvalidInput))
+		return
+	}
 	updated, err := h.svc.Update(r.Context(), id, &req)
 	if err != nil {
 		writeError(w, err)

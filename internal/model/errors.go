@@ -11,8 +11,9 @@ var (
 	ErrUnauthorized  = errors.New("unauthorized")
 )
 
-func PublicError(err error) error {
-	return err
+// IsSentinel reports whether err wraps one of the public model sentinels.
+func IsSentinel(err, target error) bool {
+	return errors.Is(err, target)
 }
 
 // ValidationError represents a single field validation failure.

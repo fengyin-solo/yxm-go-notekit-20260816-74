@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/example/notekit/internal/model"
@@ -25,17 +26,18 @@ func writeValidationErrors(w http.ResponseWriter, ve model.ValidationErrors) {
 }
 
 func mapError(err error) int {
-	if err == nil {
+	switch err {
+	case nil:
 		return http.StatusOK
 	}
-	switch err {
-	case model.ErrNotFound:
+	switch {
+	case errors.Is(err, model.ErrNotFound):
 		return http.StatusNotFound
-	case model.ErrAlreadyExists:
+	case errors.Is(err, model.ErrAlreadyExists):
 		return http.StatusConflict
-	case model.ErrInvalidInput:
+	case errors.Is(err, model.ErrInvalidInput):
 		return http.StatusBadRequest
-	case model.ErrUnauthorized:
+	case errors.Is(err, model.ErrUnauthorized):
 		return http.StatusUnauthorized
 	default:
 		return http.StatusInternalServerError
