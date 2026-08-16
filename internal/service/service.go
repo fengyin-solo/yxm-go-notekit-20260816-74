@@ -27,7 +27,7 @@ func NewNotebookService(store store.NotebookStore, noteStore store.NoteStore) *N
 func (s *NotebookService) Create(ctx context.Context, nb *model.Notebook) (*model.Notebook, error) {
 	nb.Normalize()
 	if nb.Name == "" {
-		return nil, fmt.Errorf("%v: name is required", model.ErrInvalidInput)
+		return nil, fmt.Errorf("%w: name is required", model.ErrInvalidInput)
 	}
 	nb.ID = newID()
 	nb.CreatedAt = s.now().UTC()
@@ -125,10 +125,10 @@ func NewNoteService(store store.NoteStore, cfg config.Config) *NoteService {
 func (s *NoteService) Create(ctx context.Context, note *model.Note) (*model.Note, error) {
 	note.Normalize()
 	if note.Title == "" {
-		return nil, fmt.Errorf("%v: title is required", model.ErrInvalidInput)
+		return nil, fmt.Errorf("%w: title is required", model.ErrInvalidInput)
 	}
 	if len(note.Title) > s.titleMax {
-		return nil, fmt.Errorf("%v: title exceeds maximum length", model.ErrInvalidInput)
+		return nil, fmt.Errorf("%w: title exceeds maximum length", model.ErrInvalidInput)
 	}
 	note.ID = newID()
 	note.CreatedAt = s.now().UTC()
@@ -153,10 +153,10 @@ func (s *NoteService) Update(ctx context.Context, id string, req *UpdateNoteRequ
 	req.Apply(note)
 	note.Normalize()
 	if note.Title == "" {
-		return nil, fmt.Errorf("%v: title is required", model.ErrInvalidInput)
+		return nil, fmt.Errorf("%w: title is required", model.ErrInvalidInput)
 	}
 	if len(note.Title) > s.titleMax {
-		return nil, fmt.Errorf("%v: title exceeds maximum length", model.ErrInvalidInput)
+		return nil, fmt.Errorf("%w: title exceeds maximum length", model.ErrInvalidInput)
 	}
 	note.UpdatedAt = s.now().UTC()
 	if err := s.store.Update(ctx, note); err != nil {
