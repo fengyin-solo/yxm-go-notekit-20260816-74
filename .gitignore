@@ -1,0 +1,20 @@
+# Binaries
+notekit
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test artifacts
+*.test
+*.out
+
+# Data files (user-supplied via NOTEKIT_DATA_FILE env var)
+*.json
+
+# Editor & OS
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
