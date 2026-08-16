@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/example/notekit/internal/config"
@@ -182,9 +183,8 @@ func (s *NoteService) Restore(ctx context.Context, id string) error {
 
 // List returns notes matching the filter.
 func (s *NoteService) List(ctx context.Context, filter model.NoteFilter) ([]*model.Note, error) {
-	if filter.Query != "" {
-		filter.Tags = nil
-	}
+	filter.Query = strings.TrimSpace(filter.Query)
+	filter.Tags = model.NormalizeTags(filter.Tags)
 	return s.store.List(ctx, filter)
 }
 

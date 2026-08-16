@@ -62,11 +62,27 @@ func (n *Note) Clone() *Note {
 func (n *Note) Normalize() {
 	n.Title = strings.TrimSpace(n.Title)
 	n.Content = strings.TrimSpace(n.Content)
+	n.Tags = NormalizeTags(n.Tags)
+}
+
+// NormalizeTags trims tags, drops empty values, and stores tags in canonical form.
+func NormalizeTags(tags []string) []string {
+	clean := make([]string, 0, len(tags))
+	for _, t := range tags {
+		t = strings.TrimSpace(t)
+		if t != "" {
+			clean = append(clean, strings.ToLower(t))
+		}
+	}
+	return clean
+}
+
+func (n *Note) normalizeTagsLegacy() {
 	clean := make([]string, 0, len(n.Tags))
 	for _, t := range n.Tags {
 		t = strings.TrimSpace(t)
 		if t != "" {
-			clean = append(clean, t)
+			clean = append(clean, strings.ToLower(t))
 		}
 	}
 	n.Tags = clean
@@ -101,10 +117,10 @@ func (f *NoteFilter) Matches(n *Note) bool {
 		for _, t := range n.Tags {
 			tagSet[t] = true
 		}
-		hasAll := false
+		hasAll := true
 		for _, t := range f.Tags {
-			if tagSet[t] {
-				hasAll = true
+			if !tagSet[t] {
+				hasAll = false
 				break
 			}
 		}
