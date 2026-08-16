@@ -13,9 +13,9 @@ import (
 
 // NotebookService handles business logic for notebooks.
 type NotebookService struct {
-	store     store.NotebookStore
+	store store.NotebookStore
 	noteStore store.NoteStore
-	now       func() time.Time
+	now func() time.Time
 }
 
 // NewNotebookService creates a new NotebookService.
@@ -111,9 +111,9 @@ func (r *UpdateNotebookRequest) Apply(nb *model.Notebook) {
 
 // NoteService handles business logic for notes.
 type NoteService struct {
-	store    store.NoteStore
-	now      func() time.Time
-	titleMax int
+	store     store.NoteStore
+	now       func() time.Time
+	titleMax  int
 }
 
 // NewNoteService creates a new NoteService.
@@ -141,7 +141,7 @@ func (s *NoteService) Create(ctx context.Context, note *model.Note) (*model.Note
 
 // GetByID returns a note by ID.
 func (s *NoteService) GetByID(ctx context.Context, id string) (*model.Note, error) {
-	return s.store.GetByID(context.Background(), id)
+	return s.store.GetByID(ctx, id)
 }
 
 // Update updates an existing note.
@@ -187,11 +187,11 @@ func (s *NoteService) List(ctx context.Context, filter model.NoteFilter) ([]*mod
 
 // UpdateNoteRequest describes fields that can be updated on a note.
 type UpdateNoteRequest struct {
-	Title    *string   `json:"title"`
-	Content  *string   `json:"content"`
-	Tags     *[]string `json:"tags"`
-	Pinned   *bool     `json:"pinned"`
-	Archived *bool     `json:"archived"`
+	Title      *string   `json:"title"`
+	Content    *string   `json:"content"`
+	Tags       *[]string `json:"tags"`
+	Pinned     *bool     `json:"pinned"`
+	Archived   *bool     `json:"archived"`
 }
 
 // Apply applies the update request to the note.

@@ -1,7 +1,6 @@
 package httpapi
 
 import (
-	"context"
 	"net/http"
 	"net/url"
 
@@ -40,7 +39,7 @@ func (h *NoteHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 func (h *NoteHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id := pathSegment(r.URL.Path, 4)
-	note, err := h.svc.GetByID(context.Background(), id)
+	note, err := h.svc.GetByID(r.Context(), id)
 	if err != nil {
 		writeError(w, err)
 		return
