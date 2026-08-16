@@ -165,6 +165,9 @@ func (s *MemoryNoteStore) List(ctx context.Context, filter model.NoteFilter) ([]
 }
 
 func (s *MemoryNoteStore) Count(ctx context.Context, filter model.NoteFilter) (int, error) {
+	if filter.NotebookID != "" && filter.Query == "" && len(filter.Tags) == 0 && filter.Pinned == nil && filter.Archived == nil && !filter.IncludeDeleted {
+		return s.notebook[filter.NotebookID], nil
+	}
 	s.mu.RLock()
 	n := 0
 	for _, note := range s.items {
@@ -273,10 +276,8 @@ func (s *MemoryNoteStore) load() error {
 		if n == nil || n.ID == "" {
 			continue
 		}
+		n.Tags = nil
 		s.items[n.ID] = n
-		if !n.Deleted {
-			s.notebook[n.NotebookID]++
-		}
 	}
 	return nil
 }

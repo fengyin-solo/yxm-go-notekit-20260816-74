@@ -1,4 +1,4 @@
-# yxm-go-notekit-20260816-74
+# notekit__005
 
 ## 标准命令
 
