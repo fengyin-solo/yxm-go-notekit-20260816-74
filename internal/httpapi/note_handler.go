@@ -109,8 +109,13 @@ func parseNoteFilter(q url.Values) model.NoteFilter {
 	if v := q.Get("q"); v != "" {
 		f.Query = v
 	}
-	if v := q.Get("tag"); v != "" {
-		f.Tags = []string{v}
+	// "tag" may be repeated to filter by multiple tags (AND). Collect every
+	// non-empty value; empty entries are skipped so they cannot force a
+	// no-match. Matching itself is case- and whitespace-insensitive.
+	for _, t := range q["tag"] {
+		if t != "" {
+			f.Tags = append(f.Tags, t)
+		}
 	}
 	if v := q.Get("pinned"); v == "true" {
 		b := true

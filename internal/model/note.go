@@ -58,13 +58,14 @@ func (n *Note) Clone() *Note {
 	return &cp
 }
 
-// Normalize trims whitespace from title, content, and tags.
+// Normalize trims whitespace from title, content, and tags, and lowercases
+// tags so that casing is unified across creation and filtering.
 func (n *Note) Normalize() {
 	n.Title = strings.TrimSpace(n.Title)
 	n.Content = strings.TrimSpace(n.Content)
 	clean := make([]string, 0, len(n.Tags))
 	for _, t := range n.Tags {
-		t = strings.TrimSpace(t)
+		t = strings.ToLower(strings.TrimSpace(t))
 		if t != "" {
 			clean = append(clean, t)
 		}
@@ -97,19 +98,17 @@ func (f *NoteFilter) Matches(n *Note) bool {
 		return false
 	}
 	if len(f.Tags) > 0 {
+		// A note must carry *every* requested tag to match (AND semantics),
+		// compared case- and whitespace-insensitively so filtering agrees with
+		// the normalized (lowercased) tag storage.
 		tagSet := make(map[string]bool, len(n.Tags))
 		for _, t := range n.Tags {
-			tagSet[t] = true
+			tagSet[strings.ToLower(strings.TrimSpace(t))] = true
 		}
-		hasAll := false
 		for _, t := range f.Tags {
-			if tagSet[t] {
-				hasAll = true
-				break
+			if !tagSet[strings.ToLower(strings.TrimSpace(t))] {
+				return false
 			}
-		}
-		if !hasAll {
-			return false
 		}
 	}
 	if f.Query != "" {
