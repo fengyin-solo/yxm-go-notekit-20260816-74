@@ -109,8 +109,8 @@ func parseNoteFilter(q url.Values) model.NoteFilter {
 	if v := q.Get("q"); v != "" {
 		f.Query = v
 	}
-	if v := q["tag"]; len(v) > 0 {
-		f.Tags = v
+	if v := q.Get("tag"); v != "" {
+		f.Tags = []string{v}
 	}
 	if v := q.Get("pinned"); v == "true" {
 		b := true

@@ -66,7 +66,7 @@ func (n *Note) Normalize() {
 	for _, t := range n.Tags {
 		t = strings.TrimSpace(t)
 		if t != "" {
-			clean = append(clean, strings.ToLower(t))
+			clean = append(clean, t)
 		}
 	}
 	n.Tags = clean
@@ -74,11 +74,11 @@ func (n *Note) Normalize() {
 
 // NoteFilter constrains note listing queries.
 type NoteFilter struct {
-	NotebookID string
-	Query      string // full-text match against title+content
-	Tags       []string
-	Pinned     *bool
-	Archived   *bool
+	NotebookID     string
+	Query          string // full-text match against title+content
+	Tags           []string
+	Pinned         *bool
+	Archived       *bool
 	IncludeDeleted bool
 }
 
@@ -101,10 +101,10 @@ func (f *NoteFilter) Matches(n *Note) bool {
 		for _, t := range n.Tags {
 			tagSet[t] = true
 		}
-		hasAll := true
+		hasAll := false
 		for _, t := range f.Tags {
-			if !tagSet[t] {
-				hasAll = false
+			if tagSet[t] {
+				hasAll = true
 				break
 			}
 		}

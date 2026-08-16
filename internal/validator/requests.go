@@ -53,7 +53,7 @@ func (r CreateNoteRequest) ToNote() *model.Note {
 		NotebookID: r.NotebookID,
 		Title:      r.Title,
 		Content:    r.Content,
-		Tags:       r.Tags,
+		Tags:       append([]string(nil), r.Tags...),
 	}
 }
 
